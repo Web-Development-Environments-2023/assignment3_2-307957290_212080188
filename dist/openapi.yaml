@@ -98,7 +98,7 @@ paths:
             schema:
               type: object
               properties:
-                reciepeId:
+                recipeId:
                   type: string
                   description: reciepe's id which the user saved
                   example: 716429
@@ -109,6 +109,79 @@ paths:
           description: user is not authorized
       security:
       - cookieAuth: []
+  /users/addMyRecipe:
+    get:
+      tags:
+        - Users
+      summary: Return the recipes added by the user
+      description: Get an array of recipes that were added by a specific user
+      responses:
+        "200":
+          description: Data about the user's added recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+      - Users
+      summary: Add a user's own recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '201':
+          description: The Recipe successfully saved
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized User
+        '500':
+          description: Internal Server Error
+      security:
+      - cookieAuth: []
+
+
+# My API Code
+  /recipes:
+    get:
+      tags:
+      - Recipes
+      summary: Get all recipes for a user
+      # parameters:
+      #   # - name: user_id
+      #   #   in: query
+      #   #   description: ID of the user whose recipes to retrieve
+      #     required: true
+      #     schema:
+      #       type: integer
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - Recipes
+      summary: Add a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '201':
+          description: Created
+# My API Code
+
   /recipes/{recipeId}:
     get:
       tags:
@@ -189,8 +262,8 @@ components:
           description: password conatins at least one number and one special char
           format: password
       example:
-        username: my_name
-        password: my_name@12
+        username: My_name
+        password: My_name@12
     RecipePreview:
       type: object
       properties:
@@ -227,4 +300,40 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
+        ingredients:
+          $ref: '#/components/schemas/Ingredients'
+        directions:
+          $ref: '#/components/schemas/Directions'
+    Ingredients:
+      type: array
+      description: List of ingredients needed for the recipe
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: The name of the ingredient
+            example: Heavy Cream
+          amount:
+            type: number
+            description: The amount of the ingredient
+            example: 250
+          unit:
+            type: string
+            description: The unit of measurement for the ingredient amount
+            example: ml
+    Directions:
+      type: array
+      description: List of directions for preparing the recipe
+      items:
+        type: string
+        example:
+          - Boil water in a large pot.
+          - Add the macaroni and cook until tender.
+          - In a separate saucepan, heat the heavy cream until hot.
+          - Gradually add the cheddar cheese to the hot cream, stirring until melted and smooth.
+          - Drain the cooked macaroni and mix it with the cheese sauce.
+          - Serve hot and enjoy!
+
+      
   
