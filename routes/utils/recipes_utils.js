@@ -88,6 +88,18 @@ const DButils = require("./DButils");
         };
       });
     }
+
+  // Function to delete a recipe by ID
+  async function deleteRecipe(recipeId) {
+    // Delete a row from RecipePreview where id is recipeId.
+    await DButils.execQuery(`DELETE FROM RecipePreview WHERE id = ${recipeId}`);
+  }
+
+  async function updateRecipe(recipeId, recipeDetails){
+    deleteRecipe(recipeId);
+    addRecipe(recipeDetails);
+  }
+
   
 
 
@@ -96,7 +108,9 @@ module.exports = {
   addRecipe,
   getRecipeDetails,
   getRecipeIngredients,
-  getRecipeDirections
+  getRecipeDirections,
+  deleteRecipe,
+  updateRecipe
 };
       
 

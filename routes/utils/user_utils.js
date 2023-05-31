@@ -44,9 +44,36 @@ async function getMyRecipe(user_id){
     return recipes_id;
 }
 
+async function markAsFamilyRecipe(user_id, recipe_id) {
+    const existingFamilyRecipe = await DButils.execQuery(
+        `SELECT * FROM FamilyRecipes WHERE user_id='${user_id}' AND recipeId=${recipe_id}`
+    );
 
+    if (existingFamilyRecipe.length > 0) {
+        console.log("User and recipe already exist in family recipes table.");
+        return;
+    }
 
-exports.markAsFavorite = markAsFavorite;
-exports.getFavoriteRecipes = getFavoriteRecipes;
-exports.markAsMyRecipe = markAsMyRecipe;
-exports.getMyRecipe = getMyRecipe;
+    await DButils.execQuery(`INSERT INTO FamilyRecipes VALUES ('${user_id}', ${recipe_id})`);
+}
+
+async function getFamilyRecipes(user_id) {
+    const recipes_id = await DButils.execQuery(`SELECT recipeId FROM FamilyRecipes WHERE user_id='${user_id}'`);
+    return recipes_id;
+}
+
+module.exports = {
+    markAsFavorite,
+    getFavoriteRecipes,
+    markAsMyRecipe,
+    getMyRecipe,
+    getFamilyRecipes,
+    markAsFamilyRecipe
+  };
+
+// exports.markAsFavorite = markAsFavorite;
+// exports.getFavoriteRecipes = getFavoriteRecipes;
+// exports.markAsMyRecipe = markAsMyRecipe;
+// exports.getMyRecipe = getMyRecipe;
+// exports.getFamilyRecipes = getFamilyRecipes;
+// exports.markAsFamilyRecipe = markAsFamilyRecipe;

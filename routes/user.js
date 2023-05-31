@@ -68,13 +68,14 @@ router.post('/addMyRecipe', async (req, res, next) => {
     const user_id = req.session.user_id;
     const recipe_id = req.body.id;
 
-    await user_utils.markAsMyRecipe(user_id,recipe_id); 
 
     // Get the recipe details from the request body
     const recipeDetails = req.body;
 
     // Call the function to add the recipe
     await recipe_utils.addRecipe(recipeDetails);
+    await user_utils.markAsMyRecipe(user_id, recipe_id); 
+
 
     res.status(200).send("Your recipe has been added successfully.");
   } catch (error) {
@@ -89,10 +90,10 @@ router.get('/addMyRecipe', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const recipes = await user_utils.getMyRecipe(user_id);
-    console.log("1: ", recipes)
+    // console.log("1: ", recipes)
     const recipeIds = recipes.map((recipe) => recipe.recipe_id);
 
-    console.log("2: ", recipeIds)
+    // console.log("2: ", recipeIds)
 
     let results = [];
     for (const recipeId of recipeIds) {
@@ -105,6 +106,44 @@ router.get('/addMyRecipe', async (req, res, next) => {
     next(error);
   }
 });
+
+/**
+ * This path gets body with recipeId and save this recipe in the family recipes list of the logged-in user
+ */
+router.post('/family', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const recipe_id = req.body.recipeId;
+    
+
+    await user_utils.markAsFamilyRecipe(user_id, recipe_id);
+    res.status(200).send("The recipe has been successfully saved as a family recipe");
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * This path returns the family recipes that were saved by the logged-in user
+ */
+router.get('/family', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const recipes = await user_utils.getFamilyRecipes(user_id);
+    const recipeIds = recipes.map((recipe) => recipe.recipeId);
+
+    let results = [];
+    for (const recipeId of recipeIds) {
+      const recipe = await recipe_utils.getRecipeDetails(recipeId);
+      results.push(recipe);
+    }
+
+    res.status(200).send(results);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 
 

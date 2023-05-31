@@ -149,6 +149,47 @@ paths:
           description: Internal Server Error
       security:
       - cookieAuth: []
+  /users/family:
+    get:
+      tags:
+        - Users
+      summary: Return the family recipes that were saved by a user
+      description: Get an array of family recipes that were saved by a specific user
+      responses:
+        "200":
+          description: Data about the user's family recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Users
+      summary: Save a recipe in the family recipes list of a user
+      description: Save a recipe in the family recipes list of a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipeId:
+                  type: string
+                  description: Recipe's ID which the user saved
+                  example: 716429
+      responses:
+        "200":
+          description: The recipe has been successfully saved as a family recipe
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
 
 
 # My API Code
@@ -156,7 +197,7 @@ paths:
     get:
       tags:
       - Recipes
-      summary: Get all recipes for a user
+      summary: Get all recipes
       # parameters:
       #   # - name: user_id
       #   #   in: query
@@ -181,6 +222,54 @@ paths:
         '201':
           description: Created
 # My API Code
+  # /recipes/search:
+  #   get:
+  #     tags:
+  #       - Recipes
+  #     summary: Search for recipes
+  #     parameters:
+  #       - name: query
+  #         in: query
+  #         description: The search query (recipe name)
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: filter
+  #         in: query
+  #         description: Select a filter to apply to the search results
+  #         required: false
+  #         schema:
+  #           type: string
+  #           enum: [cuisine, diet, intolerance]
+  #       - name: sort
+  #         in: query
+  #         description: The field to sort by (e.g., preparation_time, popularity)
+  #         required: false
+  #         schema:
+  #           type: string
+  #           enum: [preparation_time, popularity]
+  #       - name: limit
+  #         in: query
+  #         description: The number of recipes to retrieve (e.g., 5, 10, 15)
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           default: 5
+  #           enum: [5, 10, 15]
+  #     responses:
+  #       '200':
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 results:
+  #                   type: array
+  #                   items:
+  #                     $ref: '#/components/schemas/RecipePreview'
+  #       '404':
+  #         description: Not Found
 
   /recipes/{recipeId}:
     get:
@@ -206,6 +295,98 @@ paths:
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
+    put:
+      tags:
+      - Recipes
+      summary: Update a recipe by ID
+      parameters:
+        - in: path
+          name: recipeId
+          required: true
+          description: ID of the recipe to update
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Recipe not found
+      # security:
+      #   - bearerAuth: []
+    delete:
+      tags:
+      - Recipes
+      summary: Delete a recipe by ID
+      parameters:
+        - in: path
+          name: recipeId
+          required: true
+          description: ID of the recipe to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Recipe Deleted 
+        '404':
+          description: Recipe not found
+          
+  /search:
+    get:
+      tags:
+      - Search
+      summary: Search for recipes
+      parameters:
+        - name: query
+          in: query
+          description: The search query (recipe name)
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Select a filter to apply to the search results
+          required: false
+          schema:
+            type: string
+            enum: [cuisine, diet, intolerance]
+        - name: sort
+          in: query
+          description: The field to sort by (e.g., preparation_time, popularity)
+          required: false
+          schema:
+            type: string
+            enum: [preparation_time, popularity]
+        - name: limit
+          in: query
+          description: The number of recipes to retrieve (e.g., 5, 10, 15)
+          required: false
+          schema:
+            type: integer
+            default: 5
+            enum: [5, 10, 15]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipePreview'
+        '404':
+          description: Not Found
+
 components:
   schemas:
     User:
