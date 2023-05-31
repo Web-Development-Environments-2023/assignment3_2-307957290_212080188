@@ -32,4 +32,3 @@ Please note that this is not an exhaustive list of all the API endpoints availab
 Error Handling
 
 If an error occurs during API request processing, an appropriate error response is returned with a corresponding status code and error message.
-Authentication and Authorization
