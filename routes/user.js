@@ -144,6 +144,73 @@ router.get('/family', async (req, res, next) => {
   }
 });
 
+router.get("recipe/:recipeId", async (req, res, next) => {
+  try {
+    console.log(": ", req.params.recipeId);
+    const recipe = await recipe_utils.getRecipeDetails(req.params.recipeId);
+    const ingredients = await recipe_utils.getRecipeIngredients(req.params.recipeId);
+    const directions = await recipe_utils.getRecipeDirections(req.params.recipeId);
+    
+    // Add the ingredients to the recipe object
+    recipe.ingredients = ingredients;
+    recipe.directions = directions;
+    
+
+    await recipe_utils.markLastViewedRecipes(user_id, req.params.recipeId);
+
+    
+    res.send(recipe);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/recipe/:recipeId", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+
+    console.log(": ", req.params.recipeId);
+    const recipe = await recipe_utils.getRecipeDetails(req.params.recipeId);
+    const ingredients = await recipe_utils.getRecipeIngredients(req.params.recipeId);
+    const directions = await recipe_utils.getRecipeDirections(req.params.recipeId);
+    
+    // Add the ingredients to the recipe object
+    recipe.ingredients = ingredients;
+    recipe.directions = directions;
+    
+
+    await recipe_utils.markLastViewedRecipes(user_id, req.params.recipeId);
+
+    
+    res.send(recipe);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * This path returns the last 3 recipes viewed by the logged-in user
+ */
+
+router.get('/recipe', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const lastViewedRecipes = await user_utils.getLastViewedRecipes(user_id);
+
+    let results = [];
+    for (const recipeId of lastViewedRecipes.slice(0, 3)) {
+      const recipe = await recipe_utils.getRecipeDetails(recipeId);
+      results.push(recipe);
+    }
+
+    res.status(200).send(results);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 
 
 

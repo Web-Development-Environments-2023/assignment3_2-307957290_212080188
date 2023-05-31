@@ -62,13 +62,20 @@ async function getFamilyRecipes(user_id) {
     return recipes_id;
 }
 
+async function getLastViewedRecipes(user_id) {
+    const query = `SELECT recipe_id FROM LastViewedRecipes WHERE user_id = ${user_id} ORDER BY viewed_at DESC LIMIT 3`;
+    const result = await DButils.execQuery(query);
+    return result.map((row) => row.recipe_id);
+  }
+
 module.exports = {
     markAsFavorite,
     getFavoriteRecipes,
     markAsMyRecipe,
     getMyRecipe,
     getFamilyRecipes,
-    markAsFamilyRecipe
+    markAsFamilyRecipe,
+    getLastViewedRecipes
   };
 
 // exports.markAsFavorite = markAsFavorite;

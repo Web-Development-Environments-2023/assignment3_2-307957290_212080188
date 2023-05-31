@@ -1,8 +1,10 @@
 var express = require("express");
 var router = express.Router();
+const DButils = require("./utils/DButils");
 const recipes_utils = require("./utils/recipes_utils");
 
 // router.get("/", (req, res) => res.send("im here"));
+
 /**
  * Authenticate all incoming requests by middleware
  */
@@ -18,8 +20,6 @@ const recipes_utils = require("./utils/recipes_utils");
 //     res.sendStatus(401);
 //   }
 // });
-
-
 /**
  * This path returns all recipes for a user
  * !!!!!!!!!!!!Need to change!!!!!
@@ -39,7 +39,7 @@ router.get("/", async (req, res, next) => {
 });
 
 /**
- * This pat  h adds a recipe by a user
+ * This path adds a recipe by a user
  */
 router.post("/", async (req, res, next) => {
   try {
@@ -56,22 +56,67 @@ router.post("/", async (req, res, next) => {
 });
 
 
+// /**
+//  * This path returns a full details of a recipe by its id
+//  */
+// router.get("/:recipeId", async (req, res, next) => {
+//   try {
+//     console.log(": ", req.params.recipeId)
+//     const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
+//     const ingredients = await recipes_utils.getRecipeIngredients(req.params.recipeId);
+//     const directions = await recipes_utils.getRecipeDirections(req.params.recipeId);
+    
+//     // Add the ingredients to the recipe object
+//     recipe.ingredients = ingredients;
+//     recipe.directions = directions;
+    
+//     //new Code
+//     if (req.session && req.session.user_id) {
+//       const user_id = req.session.user_id;
+      
+//       // Check if the user exists
+//       const users = await DButils.execQuery("SELECT user_id FROM users");
+//       const userExists = users.find((x) => x.user_id === user_id);
+//       console.log("here")
+//       if (userExists) {
+//         console.log("hereImprteant")
+//         // Insert the user ID into the recipe's user_id field
+//         await recipes_utils.markLastViewedRecipes(user_id, req.params.recipeId)
+//         // await DButils.execQuery(`UPDATE recipes SET user_id = '${user_id}' WHERE recipe_id = '${req.params.recipeId}'`);
+//       }
+//       // req.user_id = user_id;
+//     }
+//     // new code
+
+
+
+//     res.send(recipe);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 /**
  * This path returns a full details of a recipe by its id
  */
 router.get("/:recipeId", async (req, res, next) => {
   try {
-    console.log(": ", req.params.recipeId)
+    const user_id = req.session.user_id;
+    console.log(": ", req.params.recipeId);
     const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
     const ingredients = await recipes_utils.getRecipeIngredients(req.params.recipeId);
     const directions = await recipes_utils.getRecipeDirections(req.params.recipeId);
-
+    
     // Add the ingredients to the recipe object
     recipe.ingredients = ingredients;
     recipe.directions = directions;
+    
+    if(user_id){
+        await recipes_utils.markLastViewedRecipes(user_id, req.params.recipeId);
 
+    }
+    // await recipes_utils.markLastViewedRecipes(user_id, req.params.recipeId);
 
-
+    
     res.send(recipe);
   } catch (error) {
     next(error);
@@ -79,11 +124,11 @@ router.get("/:recipeId", async (req, res, next) => {
 });
 
 /**
- * This path returns a full details of a recipe by its id
+ * DELETE - Delete a recipe and its details from all tables by its ID
  */
 router.delete("/:recipeId", async (req, res, next) => {
   try {
-    console.log(": ", req.params.recipeId)
+    // console.log(": ", req.params.recipeId)
     await recipes_utils.deleteRecipe(req.params.recipeId);
     res.send(204);
   } catch (error) {
@@ -93,7 +138,7 @@ router.delete("/:recipeId", async (req, res, next) => {
 
 router.put("/:recipeId", async (req, res, next) => {
   try {
-    console.log(": ", req.params.recipeId)
+    // console.log(": ", req.params.recipeId)
     await recipes_utils.updateRecipe(req.params.recipeId, req.body);
     res.send(200);
   } catch (error) {

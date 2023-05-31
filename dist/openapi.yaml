@@ -190,6 +190,52 @@ paths:
           description: User is not authorized
       security:
         - cookieAuth: []
+  /users/recipe:
+    get:
+      tags:
+      - Users
+      summary: Return the last 3 recipes viewed by a user
+      description: Get an array of the last 3 recipes viewed by a specific user.
+      responses:
+        "200":
+          description: Data about the user's last 3 viewed recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []   
+  /users/recipe/{recipeId}:
+    get:
+      tags:
+      - Users
+      summary: Return preview details on recipe by his ID
+      description: Return preview details on recipe by his ID
+      parameters:
+      - name: recipeId
+        in: path
+        description: recipe's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: data about the recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipePreview'
+        "404":
+          description: recipeId is not exists
+      security:
+        - cookieAuth: []
+
 
 
 # My API Code

@@ -99,6 +99,18 @@ const DButils = require("./DButils");
     deleteRecipe(recipeId);
     addRecipe(recipeDetails);
   }
+  
+  async function markLastViewedRecipes(user_id, recipe_id){
+    try {
+      await DButils.execQuery(`
+        INSERT INTO LastViewedRecipes (user_id, recipe_id, viewed_at)
+        VALUES (${user_id}, ${recipe_id}, CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE viewed_at = CURRENT_TIMESTAMP
+      `);
+    } catch (error) {
+      console.log("Error marking last viewed recipes:", error);
+    }
+}
 
   
 
@@ -110,7 +122,8 @@ module.exports = {
   getRecipeIngredients,
   getRecipeDirections,
   deleteRecipe,
-  updateRecipe
+  updateRecipe,
+  markLastViewedRecipes
 };
       
 
