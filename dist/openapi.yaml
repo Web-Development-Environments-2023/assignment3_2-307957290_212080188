@@ -240,20 +240,20 @@ paths:
 
 # My API Code
   /recipes:
-    get:
-      tags:
-      - Recipes
-      summary: Get all recipes
-      # parameters:
-      #   # - name: user_id
-      #   #   in: query
-      #   #   description: ID of the user whose recipes to retrieve
-      #     required: true
-      #     schema:
-      #       type: integer
-      responses:
-        '200':
-          description: OK
+    # get:
+    #   tags:
+    #   - Recipes
+    #   summary: Get all recipes
+    #   # parameters:
+    #   #   # - name: user_id
+    #   #   #   in: query
+    #   #   #   description: ID of the user whose recipes to retrieve
+    #   #     required: true
+    #   #     schema:
+    #   #       type: integer
+    #   responses:
+    #     '200':
+    #       description: OK
     post:
       tags:
       - Recipes
