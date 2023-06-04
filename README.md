@@ -3,7 +3,6 @@
 Recipe App
 
 This repository contains the backend server for a Recipe App. The server is built using Node.js and Express.js and provides various API endpoints for managing recipes and user-related functionality.
-Getting Started
 
 To run the server locally, follow these steps:
 
