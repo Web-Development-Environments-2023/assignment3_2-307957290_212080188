@@ -32,3 +32,6 @@ Please note that this is not an exhaustive list of all the API endpoints availab
 Error Handling
 
 If an error occurs during API request processing, an appropriate error response is returned with a corresponding status code and error message.
+
+Danielle Aspir 307957290
+Lana Aboraya 212080188
