@@ -98,7 +98,7 @@ paths:
             schema:
               type: object
               properties:
-                reciepeId:
+                recipeId:
                   type: string
                   description: reciepe's id which the user saved
                   example: 716429
@@ -109,6 +109,214 @@ paths:
           description: user is not authorized
       security:
       - cookieAuth: []
+  /users/addMyRecipe:
+    get:
+      tags:
+        - Users
+      summary: Return the recipes added by the user
+      description: Get an array of recipes that were added by a specific user
+      responses:
+        "200":
+          description: Data about the user's added recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+      - Users
+      summary: Add a user's own recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '201':
+          description: The Recipe successfully saved
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized User
+        '500':
+          description: Internal Server Error
+      security:
+      - cookieAuth: []
+  /users/family:
+    get:
+      tags:
+        - Users
+      summary: Return the family recipes that were saved by a user
+      description: Get an array of family recipes that were saved by a specific user
+      responses:
+        "200":
+          description: Data about the user's family recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Users
+      summary: Save a recipe in the family recipes list of a user
+      description: Save a recipe in the family recipes list of a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipeId:
+                  type: string
+                  description: Recipe's ID which the user saved
+                  example: 716429
+      responses:
+        "200":
+          description: The recipe has been successfully saved as a family recipe
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []
+  /users/recipe:
+    get:
+      tags:
+      - Users
+      summary: Return the last 3 recipes viewed by a user
+      description: Get an array of the last 3 recipes viewed by a specific user.
+      responses:
+        "200":
+          description: Data about the user's last 3 viewed recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: User is not authorized
+      security:
+        - cookieAuth: []   
+  /users/recipe/{recipeId}:
+    get:
+      tags:
+      - Users
+      summary: Return preview details on recipe by his ID
+      description: Return preview details on recipe by his ID
+      parameters:
+      - name: recipeId
+        in: path
+        description: recipe's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: data about the recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipePreview'
+        "404":
+          description: recipeId is not exists
+      security:
+        - cookieAuth: []
+
+
+
+# My API Code
+  /recipes:
+    # get:
+    #   tags:
+    #   - Recipes
+    #   summary: Get all recipes
+    #   # parameters:
+    #   #   # - name: user_id
+    #   #   #   in: query
+    #   #   #   description: ID of the user whose recipes to retrieve
+    #   #     required: true
+    #   #     schema:
+    #   #       type: integer
+    #   responses:
+    #     '200':
+    #       description: OK
+    post:
+      tags:
+      - Recipes
+      summary: Add a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '201':
+          description: Created
+# My API Code
+  # /recipes/search:
+  #   get:
+  #     tags:
+  #       - Recipes
+  #     summary: Search for recipes
+  #     parameters:
+  #       - name: query
+  #         in: query
+  #         description: The search query (recipe name)
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: filter
+  #         in: query
+  #         description: Select a filter to apply to the search results
+  #         required: false
+  #         schema:
+  #           type: string
+  #           enum: [cuisine, diet, intolerance]
+  #       - name: sort
+  #         in: query
+  #         description: The field to sort by (e.g., preparation_time, popularity)
+  #         required: false
+  #         schema:
+  #           type: string
+  #           enum: [preparation_time, popularity]
+  #       - name: limit
+  #         in: query
+  #         description: The number of recipes to retrieve (e.g., 5, 10, 15)
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           default: 5
+  #           enum: [5, 10, 15]
+  #     responses:
+  #       '200':
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 results:
+  #                   type: array
+  #                   items:
+  #                     $ref: '#/components/schemas/RecipePreview'
+  #       '404':
+  #         description: Not Found
+
   /recipes/{recipeId}:
     get:
       tags:
@@ -133,6 +341,98 @@ paths:
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
+    put:
+      tags:
+      - Recipes
+      summary: Update a recipe by ID
+      parameters:
+        - in: path
+          name: recipeId
+          required: true
+          description: ID of the recipe to update
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipePreview'
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Recipe not found
+      # security:
+      #   - bearerAuth: []
+    delete:
+      tags:
+      - Recipes
+      summary: Delete a recipe by ID
+      parameters:
+        - in: path
+          name: recipeId
+          required: true
+          description: ID of the recipe to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Recipe Deleted 
+        '404':
+          description: Recipe not found
+          
+  /search:
+    get:
+      tags:
+      - Search
+      summary: Search for recipes
+      parameters:
+        - name: query
+          in: query
+          description: The search query (recipe name)
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Select a filter to apply to the search results
+          required: false
+          schema:
+            type: string
+            enum: [cuisine, diet, intolerance]
+        - name: sort
+          in: query
+          description: The field to sort by (e.g., preparation_time, popularity)
+          required: false
+          schema:
+            type: string
+            enum: [preparation_time, popularity]
+        - name: limit
+          in: query
+          description: The number of recipes to retrieve (e.g., 5, 10, 15)
+          required: false
+          schema:
+            type: integer
+            default: 5
+            enum: [5, 10, 15]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipePreview'
+        '404':
+          description: Not Found
+
 components:
   schemas:
     User:
@@ -189,8 +489,8 @@ components:
           description: password conatins at least one number and one special char
           format: password
       example:
-        username: my_name
-        password: my_name@12
+        username: My_name
+        password: My_name@12
     RecipePreview:
       type: object
       properties:
@@ -227,4 +527,40 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
+        ingredients:
+          $ref: '#/components/schemas/Ingredients'
+        directions:
+          $ref: '#/components/schemas/Directions'
+    Ingredients:
+      type: array
+      description: List of ingredients needed for the recipe
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: The name of the ingredient
+            example: Heavy Cream
+          amount:
+            type: number
+            description: The amount of the ingredient
+            example: 250
+          unit:
+            type: string
+            description: The unit of measurement for the ingredient amount
+            example: ml
+    Directions:
+      type: array
+      description: List of directions for preparing the recipe
+      items:
+        type: string
+        example:
+          - Boil water in a large pot.
+          - Add the macaroni and cook until tender.
+          - In a separate saucepan, heat the heavy cream until hot.
+          - Gradually add the cheddar cheese to the hot cream, stirring until melted and smooth.
+          - Drain the cooked macaroni and mix it with the cheese sauce.
+          - Serve hot and enjoy!
+
+      
   
